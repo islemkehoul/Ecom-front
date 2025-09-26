@@ -11,20 +11,6 @@ To start the development server:
 npm run dev
 ```
 
-### Building for Production
-To build the app for production:
-
-```
-npm run build
-```
-
-### Preview Production Build
-To preview the production build locally:
-
-```
-npm run preview
-```
-
 ## Project Structure
 - `src/` - Main source code (React components, styles, etc.)
 - `public/` - Static assets
