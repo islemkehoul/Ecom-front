@@ -21,15 +21,12 @@ const Products = () => {
     if (!data) return [];
 
     return data.filter((product: ProductType) => {
-      // Search filter - check name and description
       const matchesSearch = searchTerm === '' || 
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (product.description && product.description.toLowerCase().includes(searchTerm.toLowerCase()));
 
-      // Category filter
       const matchesCategory = selectedCategory === 'All' || 
         product.category?.toLowerCase() === selectedCategory.toLowerCase() ||
-        // Handle category mapping from your enum to display names
         (selectedCategory === 'Electronics' && product.category === 'electronics') ||
         (selectedCategory === 'Clothing' && product.category === 'clothing') ||
         (selectedCategory === 'Home & Garden' && product.category === 'home_garden') ||
@@ -103,7 +100,7 @@ const Products = () => {
           {filteredProducts.map((product: ProductType) => (
             <div
               key={product.id}
-              className="border rounded-lg overflow-hidden shadow hover:shadow-lg transition-shadow duration-300 flex flex-col h-[420px]"
+              className="border rounded-lg overflow-hidden shadow hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 flex flex-col h-[420px]"
             >
               {product.image && (
                 <img
