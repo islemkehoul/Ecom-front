@@ -1,23 +1,52 @@
 import { useState, useEffect } from 'react';
-import jacketImage from '../assets/jacket.jpg';
+import Box from '../assets/4440890.jpg';
+import woman from '../assets/7552577.jpg'
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const Home = () => {
-  const { t, i18n} = useTranslation();
-    const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
 
   const [animate, setAnimate] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Your carousel images array - add more images as needed
+  const carouselImages = [
+    Box,
+    woman
+  ];
 
   // Trigger animation after component mounts
   useEffect(() => {
     setAnimate(true);
   }, []);
 
+  // Auto-advance carousel
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
+    }, 2000); // Change slide every 2 seconds
+    return () => clearInterval(timer);
+  }, [carouselImages.length]);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % carouselImages.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + carouselImages.length) % carouselImages.length);
+  };
+
+  const goToSlide = (index: number) => {
+    setCurrentSlide(index);
+  };
+
   return (
     <>
       {/* Optional: Add keyframes inline (or use external CSS) */}
-      <style >{`
+      <style>{`
         @keyframes fadeInLeft {
           from {
             opacity: 0;
@@ -77,20 +106,68 @@ const Home = () => {
             {t("home.description")}
           </p>
           <div className={`mt-6 ${animate ? 'fade-in-up' : ''}`}>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md transition transform hover:scale-105"
-            onClick={() => navigate('/products')}>
+            <button 
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md transition transform hover:scale-105"
+              onClick={() => navigate('/products')}
+            >
               {t("home.Shop")}
             </button>
           </div>
         </div>
 
-        {/* Image (Right Side in LTR, Left Side in RTL) */}
+        {/* Carousel (Right Side in LTR, Left Side in RTL) */}
         <div className={`md:w-1/2 mt-8 md:mt-0 ${animate ? 'scale-in' : ''}`}>
-          <img
-            src={jacketImage}
-            alt="Hero section image"
-            className="w-full h-80 md:h-96 object-cover rounded-2xl shadow-xl mx-auto"
-          />
+          <div className="relative w-full h-80 md:h-96 rounded-2xl shadow-xl overflow-hidden group">
+            {/* Images */}
+            <div className="relative w-full h-full">
+              {carouselImages.map((img, index) => (
+                <img
+                  key={index}
+                  src={img}
+                  alt={`Slide ${index + 1}`}
+                  className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-500 ${
+                    index === currentSlide ? 'opacity-100' : 'opacity-0'
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Navigation Arrows - only show if more than 1 image */}
+            {carouselImages.length > 1 && (
+              <>
+                <button
+                  onClick={prevSlide}
+                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg transition opacity-0 group-hover:opacity-100"
+                  aria-label="Previous slide"
+                >
+                  <ChevronLeft className="w-6 h-6 text-gray-800" />
+                </button>
+                <button
+                  onClick={nextSlide}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-2 rounded-full shadow-lg transition opacity-0 group-hover:opacity-100"
+                  aria-label="Next slide"
+                >
+                  <ChevronRight className="w-6 h-6 text-gray-800" />
+                </button>
+
+                {/* Dots Indicator */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                  {carouselImages.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => goToSlide(index)}
+                      className={`w-2 h-2 rounded-full transition-all ${
+                        index === currentSlide 
+                          ? 'bg-white w-8' 
+                          : 'bg-white/50 hover:bg-white/75'
+                      }`}
+                      aria-label={`Go to slide ${index + 1}`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </section>
     </>

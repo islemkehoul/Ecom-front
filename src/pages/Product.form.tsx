@@ -3,7 +3,7 @@ import { useQuery, useMutation } from '@tanstack/react-query';
 import { getAllProducts, createOrder } from '../controllers/controller';
 import { VITE_API_URL } from '../api/apiconfig';
 import { z } from 'zod';
-import { WILAYAS } from '../assets/Wilayas';
+import { WILAYAS } from '../data/Wilayas';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
