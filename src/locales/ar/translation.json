@@ -1,0 +1,51 @@
+{
+    "navbar": {
+        "home": "الصفحة الرئيسية",
+        "products": "المنتجات",
+        "about": "حول",
+        "contact": "اتصل",
+        "cart": "عربة التسوق",
+        "language": "اللغة"
+    },
+    "home": {
+        "welcome": "مرحبًا بك في متجرنا الإلكتروني!",
+        "description": "أفضل المنتجات بأفضل الأسعار.",
+        "Shop": "تسوق الآن"
+    },
+    "products": {
+        "title": "منتجاتنا",
+        "add_to_cart": "أضف إلى العربة",
+        "view_details": "عرض التفاصيل"
+    },
+    "about": {
+        "title": "معلومات عنا",
+        "content": "نحن ملتزمون بتقديم أفضل تجربة تسوق لعملائنا."
+    },
+    "contact": {
+        "title": "اتصل بنا",
+        "email": "البريد الإلكتروني",
+        "phone": "الهاتف",
+        "address": "العنوان"
+    },
+    "cart": {
+        "title": "عربة التسوق الخاصة بك",
+        "empty": "عربة التسوق فارغة.",
+        "checkout": "الدفع"
+    },
+    "footer": {
+        "rights_reserved": "جميع الحقوق محفوظة © 2024",
+        "Company": "الشركة",
+        "About us": "معلومات عنا",
+        "Contact": "اتصل",
+        "Careers": "وظائف",
+        "Products": "المنتجات",
+        "All Products": "جميع المنتجات",
+        "New Arrivals": "وصول جديدة",
+        "Featured": "مميز",
+        "Customer Service": "خدمة العملاء",
+        "faq": "أسئلة شائعة",
+        "Shipping": "الشحن",
+        "Returns": "المرتجعات",
+        "Connect with us": "تواصل معنا"
+    }
+}

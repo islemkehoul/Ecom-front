@@ -1,43 +1,45 @@
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom'
 
 const Footer = () => {
+  const { t } = useTranslation();
   return (
       <footer className="bg-gray-800 text-white mt-auto hidden md:block">
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             {/* Company Info */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">Company</h3>
+              <h3 className="text-lg font-semibold mb-4">{t('footer.Company')}</h3>
               <ul className="space-y-2">
-                <li><Link to="/about" className="hover:text-blue-400">About Us</Link></li>
-                <li><Link to="/contact" className="hover:text-blue-400">Contact</Link></li>
-                <li><a href="#" className="hover:text-blue-400">Careers</a></li>
+                <li><Link to="/about" className="hover:text-blue-400">{t('footer.About us')}</Link></li>
+                <li><Link to="/contact" className="hover:text-blue-400">{t('footer.Contact')}</Link></li>
+                <li><a href="#" className="hover:text-blue-400">{t('footer.Careers')}</a></li>
               </ul>
             </div>
 
             {/* Products */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">Products</h3>
+              <h3 className="text-lg font-semibold mb-4">{t('footer.Products')}</h3>
               <ul className="space-y-2">
-                <li><Link to="/products" className="hover:text-blue-400">All Products</Link></li>
-                <li><a href="#" className="hover:text-blue-400">New Arrivals</a></li>
-                <li><a href="#" className="hover:text-blue-400">Featured</a></li>
+                <li><Link to="/products" className="hover:text-blue-400">{t('footer.All Products')}</Link></li>
+                <li><a href="#" className="hover:text-blue-400">{t('footer.New Arrivals')}</a></li>
+                <li><a href="#" className="hover:text-blue-400">{t('footer.Featured')}</a></li>
               </ul>
             </div>
 
             {/* Customer Service */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">Customer Service</h3>
+              <h3 className="text-lg font-semibold mb-4">{t('footer.Customer Service')}</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="hover:text-blue-400">FAQ</a></li>
-                <li><a href="#" className="hover:text-blue-400">Shipping</a></li>
-                <li><a href="#" className="hover:text-blue-400">Returns</a></li>
+                <li><a href="#" className="hover:text-blue-400">{t('footer.faq')}</a></li>
+                <li><a href="#" className="hover:text-blue-400">{t('footer.Shipping')}</a></li>
+                <li><a href="#" className="hover:text-blue-400">{t('footer.Returns')}</a></li>
               </ul>
             </div>
 
             {/* Connect */}
             <div>
-              <h3 className="text-lg font-semibold mb-4">Connect With Us</h3>
+              <h3 className="text-lg font-semibold mb-4">{t('footer.Connect with us')}</h3>
               <div className="flex space-x-4">
                 <a href="#" className="hover:text-blue-400">
                   <span className="sr-only">Facebook</span>

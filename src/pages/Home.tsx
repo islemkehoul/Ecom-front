@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
 import jacketImage from '../assets/jacket.jpg';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Home = () => {
+  const { t, i18n} = useTranslation();
     const navigate = useNavigate();
 
   const [animate, setAnimate] = useState(false);
@@ -65,25 +67,24 @@ const Home = () => {
         }
       `}</style>
 
-      <section className="container mx-auto px-4 py-12 flex flex-col md:flex-row items-center">
-        {/* Text Content (Left Side) */}
-        <div className="md:w-1/2 md:pr-8">
+      <section className="container mx-auto px-4 py-12 flex flex-col md:flex-row items-center" dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
+        {/* Text Content (Left Side in LTR, Right Side in RTL) */}
+        <div className="md:w-1/2 md:pr-8 md:rtl:pr-0 md:rtl:pl-8">
           <h1 className={`text-4xl md:text-5xl font-bold text-gray-800 ${animate ? 'fade-in-left' : ''}`}>
-            Welcome to Our Store
+            {t("home.welcome")}
           </h1>
           <p className={`mt-4 text-lg text-gray-600 ${animate ? 'fade-in-up' : ''}`}>
-            Discover our amazing products that are crafted to elevate your lifestyle. 
-            High quality, great prices, and fast delivery.
+            {t("home.description")}
           </p>
           <div className={`mt-6 ${animate ? 'fade-in-up' : ''}`}>
             <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md transition transform hover:scale-105"
             onClick={() => navigate('/products')}>
-              Shop Now
+              {t("home.Shop")}
             </button>
           </div>
         </div>
 
-        {/* Image (Right Side) */}
+        {/* Image (Right Side in LTR, Left Side in RTL) */}
         <div className={`md:w-1/2 mt-8 md:mt-0 ${animate ? 'scale-in' : ''}`}>
           <img
             src={jacketImage}

@@ -1,0 +1,51 @@
+{
+    "navbar": {
+        "home": "Home",
+        "products": "Products",
+        "about": "About",
+        "contact": "Contact",
+        "cart": "Cart",
+        "language": "Language"
+    },
+    "home": {
+        "welcome": "Welcome to our online store!",
+        "description": "Discover our amazing products that are crafted to elevate your lifestyle. High quality, great prices, and fast delivery.",
+        "Shop": "Shop Now"
+    },
+    "products": {
+        "title": "Our Products",
+        "add_to_cart": "Add to Cart",
+        "view_details": "View Details"
+    },
+    "about": {
+        "title": "About Us",
+        "content": "We are committed to providing the best shopping experience for our customers."
+    },
+    "contact": {
+        "title": "Contact Us",
+        "email": "Email",
+        "phone": "Phone",
+        "address": "Address"
+    },
+    "cart": {
+        "title": "Your Cart",
+        "empty": "Your cart is empty.",
+        "checkout": "Checkout"
+    },
+    "footer": {
+        "rights_reserved": "All rights reserved © 2024",
+        "Company": "Company",
+        "About us": "About us",
+        "Contact": "Contact",
+        "Careers": "Careers",
+        "Products": "Products",
+        "All Products": "All Products",
+        "New Arrivals": "New Arrivals",
+        "Featured": "Featured",
+        "Customer Service": "Customer Service",
+        "faq": "FAQ",
+        "Shipping": "Shipping",
+        "Returns": "Returns",
+        "Connect with us": "Connect with us"
+    }
+}
