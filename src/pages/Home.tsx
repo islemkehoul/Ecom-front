@@ -80,6 +80,26 @@ const Home = () => {
           }
         }
 
+        @keyframes pulseGlow {
+          0%, 100% {
+            box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7);
+            transform: scale(1);
+          }
+          50% {
+            box-shadow: 0 0 20px 10px rgba(37, 99, 235, 0);
+            transform: scale(1.05);
+          }
+        }
+
+        @keyframes pointDown {
+          0%, 100% {
+            transform: translateY(0);
+          }
+          50% {
+            transform: translateY(10px);
+          }
+        }
+
         .fade-in-left {
           opacity: 0;
           animation: fadeInLeft 0.8s ease-out forwards;
@@ -94,6 +114,14 @@ const Home = () => {
           opacity: 0;
           animation: scaleIn 0.7s ease-out 0.4s forwards;
         }
+
+        .pulse-glow {
+          animation: pulseGlow 2s ease-in-out 1s 3;
+        }
+
+        .pointer-arrow {
+          animation: pointDown 1s ease-in-out 1s infinite;
+        }
       `}</style>
 
       <section className="container mx-auto px-4 py-12 flex flex-col md:flex-row items-center" dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
@@ -105,13 +133,14 @@ const Home = () => {
           <p className={`mt-4 text-lg text-gray-600 ${animate ? 'fade-in-up' : ''}`}>
             {t("home.description")}
           </p>
-          <div className={`mt-6 ${animate ? 'fade-in-up' : ''}`}>
+          <div className={`mt-6 relative ${animate ? 'fade-in-up' : ''}`}>
             <button 
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md transition transform hover:scale-105"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md transition transform hover:scale-105 pulse-glow cursor-pointer"
               onClick={() => navigate('/products')}
             >
               {t("home.Shop")}
             </button>
+            
           </div>
         </div>
 
