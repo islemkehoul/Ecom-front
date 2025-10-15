@@ -7,11 +7,8 @@ const axiosInstance = axios.create({
  export const getAllProducts = async ()=>
   {
     try {
-      const response = await axiosInstance.get(`${VITE_API_URL}/products`, {
-    headers: {
-      "ngrok-skip-browser-warning": "true",
-    },
-  });
+      const response = await axiosInstance.get(`${VITE_API_URL}/products`
+  );
       return response.data.data;
     }
     catch(error)
@@ -34,6 +31,8 @@ export const createOrder = async (formData: any) => {
     
     throw error;
   }
+
+
 }
 
 

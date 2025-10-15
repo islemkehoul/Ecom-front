@@ -1,9 +1,9 @@
 import { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import {VITE_API_URL} from '../api/apiconfig';
+import { VITE_API_URL } from '../api/apiconfig';
 import { useQuery } from '@tanstack/react-query';
 import type { ProductType } from '../data/product.type';
-import { getAllProducts } from '../controllers/controller';
+import { getAllProducts } from '../controllers/product.controller';
 
 const Products = () => {
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -11,21 +11,23 @@ const Products = () => {
 
   const categories = ['All', 'Electronics', 'Clothing', 'Home & Garden', 'Books', 'Sports'];
 
-  const {data, isLoading, isError} = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ['products'],
     queryFn: getAllProducts,
   });
 
   // Filter products based on search term and category
   const filteredProducts = useMemo(() => {
-    if (!data) return [];
+    if (!data) return []; // Access data.data based on response structure
 
     return data.filter((product: ProductType) => {
-      const matchesSearch = searchTerm === '' || 
+      const matchesSearch =
+        searchTerm === '' ||
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         (product.description && product.description.toLowerCase().includes(searchTerm.toLowerCase()));
 
-      const matchesCategory = selectedCategory === 'All' || 
+      const matchesCategory =
+        selectedCategory === 'All' ||
         product.category?.toLowerCase() === selectedCategory.toLowerCase() ||
         (selectedCategory === 'Electronics' && product.category === 'electronics') ||
         (selectedCategory === 'Clothing' && product.category === 'clothing') ||
@@ -71,7 +73,7 @@ const Products = () => {
       {/* Results count */}
       <div className="mb-4">
         <p className="text-gray-600">
-          Showing {filteredProducts.length} of {data?.length || 0} products
+          Showing {filteredProducts.length} of {data?.data?.length || 0} products
           {searchTerm && ` for "${searchTerm}"`}
           {selectedCategory !== 'All' && ` in ${selectedCategory}`}
         </p>
@@ -97,38 +99,42 @@ const Products = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredProducts.map((product: ProductType) => (
-            <div
-              key={product.id}
-              className="border rounded-lg overflow-hidden shadow hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 flex flex-col h-[420px]"
-            >
-              {product.image && (
-                <img
-                  src={`${VITE_API_URL}/products/uploads/${product.image}`}
-                  alt={product.name}
-                  className="w-full h-48 object-cover"
-                />
-              )}
-              <div className="p-4 flex flex-col flex-grow">
-                <div className="flex-grow">
-                  <h3 className="text-lg font-semibold">{product.name}</h3>
-                  <p className="text-gray-600 text-sm mt-1">{product.category}</p>
-                  <p className="mt-2">
-                    <strong>${product.price}</strong>
-                  </p>
-                  <p className="text-gray-700 text-sm mt-1 line-clamp-2 overflow-hidden">
-                    {product.description}
-                  </p>
+          {filteredProducts.map((product: ProductType) => {
+            // Select the main image (isMain: true) or the first image if no main image
+            const mainImage = product.productImages.find((img) => img.isMain) || product.productImages[0];
+            return (
+              <div
+                key={product.id}
+                className="border rounded-lg overflow-hidden shadow hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 flex flex-col h-[420px]"
+              >
+                {mainImage && mainImage.imageUrl && (
+                  <img
+                    src={`${VITE_API_URL}/products/uploads/${mainImage.imageUrl}`}
+                    alt={product.name}
+                    className="w-full h-48 object-cover"
+                  />
+                )}
+                <div className="p-4 flex flex-col flex-grow">
+                  <div className="flex-grow">
+                    <h3 className="text-lg font-semibold">{product.name}</h3>
+                    <p className="text-gray-600 text-sm mt-1">{product.category}</p>
+                    <p className="mt-2">
+                      <strong>${product.price}</strong>
+                    </p>
+                    <p className="text-gray-700 text-sm mt-1 line-clamp-2 overflow-hidden">
+                      {product.description}
+                    </p>
+                  </div>
+                  <Link
+                    to={`/products/${product.id}`}
+                    className="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition block text-center"
+                  >
+                    Add to Cart
+                  </Link>
                 </div>
-                <Link
-                  to={`/products/${product.id}`}
-                  className="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition block text-center"
-                >
-                  Add to Cart
-                </Link>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

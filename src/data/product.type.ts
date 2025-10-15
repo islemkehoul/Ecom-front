@@ -1,10 +1,17 @@
-export interface ProductType {
+// ../data/product.type.ts
+
+export interface ProductImagesType {
   id: number;
-  name: string;
-  category: string;
-  price: number;
-  image: string;
-  description: string;
-  
+  productId: string;
+  isMain: boolean;
+  imageUrl: string | null;
 }
 
+export interface ProductType {
+  id: string;
+  name: string;
+  description: string | null;
+  price: string;
+  category: 'electronics' | 'clothing' | 'home_garden' | 'books' | 'sports' | null;
+  productImages: ProductImagesType[];
+}

@@ -6,8 +6,8 @@ interface Product {
   name: string;
   price: number;
   description: string;
-  category: string;
-  image: File | null;
+  category: 'electronics' | 'clothing' | 'home_garden' | 'books' | 'sports' | null;
+  images: File[];
 }
 
 const ProductForm: React.FC = () => {
@@ -16,9 +16,39 @@ const ProductForm: React.FC = () => {
   const [price, setPrice] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [category, setCategory] = useState<string>('');
-  const [image, setImage] = useState<File | null>(null);
+  const [images, setImages] = useState<File[]>([]);
+  const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [message, setMessage] = useState<string>('');
   const [error, setError] = useState<string>('');
+
+  const categories: Array<Product['category']> = [
+    null,
+    'electronics',
+    'clothing',
+    'home_garden',
+    'books',
+    'sports',
+  ];
+
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files);
+      setImages((prevImages) => [...prevImages, ...newFiles]);
+      // Generate preview URLs for new images
+      const newPreviews = newFiles.map((file) => URL.createObjectURL(file));
+      setImagePreviews((prevPreviews) => [...prevPreviews, ...newPreviews]);
+    }
+  };
+
+  const handleDeleteImage = (index: number) => {
+    // Remove image and its preview at the specified index
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
+    setImagePreviews((prevPreviews) => {
+      // Revoke the object URL to free memory
+      URL.revokeObjectURL(prevPreviews[index]);
+      return prevPreviews.filter((_, i) => i !== index);
+    });
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -30,10 +60,11 @@ const ProductForm: React.FC = () => {
     formData.append('name', name);
     formData.append('price', price);
     formData.append('description', description);
-    formData.append('category', category);
-    if (image) {
+    formData.append('category', category || ''); // Send empty string for null
+    // Append all images under the 'image' key
+    images.forEach((image) => {
       formData.append('image', image);
-    }
+    });
 
     try {
       const response = await axios.post('http://localhost:3000/api/v1/products/', formData, {
@@ -48,7 +79,10 @@ const ProductForm: React.FC = () => {
       setPrice('');
       setDescription('');
       setCategory('');
-      setImage(null);
+      setImages([]);
+      // Revoke all preview URLs
+      imagePreviews.forEach((url) => URL.revokeObjectURL(url));
+      setImagePreviews([]);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Error creating product');
       console.error(err);
@@ -65,7 +99,9 @@ const ProductForm: React.FC = () => {
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Product ID */}
         <div>
-          <label htmlFor="id" className="block text-sm font-medium text-gray-700">Product ID</label>
+          <label htmlFor="id" className="block text-sm font-medium text-gray-700">
+            Product ID
+          </label>
           <input
             type="text"
             id="id"
@@ -78,7 +114,9 @@ const ProductForm: React.FC = () => {
 
         {/* Product Name */}
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">Product Name</label>
+          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+            Product Name
+          </label>
           <input
             type="text"
             id="name"
@@ -91,7 +129,9 @@ const ProductForm: React.FC = () => {
 
         {/* Price */}
         <div>
-          <label htmlFor="price" className="block text-sm font-medium text-gray-700">Price</label>
+          <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+            Price
+          </label>
           <input
             type="number"
             id="price"
@@ -104,7 +144,9 @@ const ProductForm: React.FC = () => {
 
         {/* Description */}
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700">Description</label>
+          <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+            Description
+          </label>
           <textarea
             id="description"
             rows={3}
@@ -117,26 +159,65 @@ const ProductForm: React.FC = () => {
 
         {/* Category */}
         <div>
-          <label htmlFor="category" className="block text-sm font-medium text-gray-700">Category</label>
-          <input
-            type="text"
+          <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+            Category
+          </label>
+          <select
             id="category"
             value={category}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => setCategory(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLSelectElement>) => setCategory(e.target.value)}
             required
             className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 p-2"
-          />
+          >
+            <option value="">Select a category</option>
+            {categories.filter((cat) => cat !== null).map((cat) => (
+              <option key={cat} value={cat}>
+                {cat
+                  .split('_')
+                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                  .join(' ')}
+              </option>
+            ))}
+          </select>
         </div>
 
-        {/* Image */}
+        {/* Images */}
         <div>
-          <label htmlFor="image" className="block text-sm font-medium text-gray-700">Product Image</label>
+          <label htmlFor="images" className="block text-sm font-medium text-gray-700">
+            Product Images
+          </label>
           <input
             type="file"
-            id="image"
-            onChange={(e: ChangeEvent<HTMLInputElement>) => setImage(e.target.files ? e.target.files[0] : null)}
+            id="images"
+            multiple
+            accept="image/*"
+            onChange={handleImageChange}
             className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 p-2"
           />
+          {images.length > 0 && (
+            <div className="mt-4">
+              <p className="text-sm text-gray-600">Selected images:</p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-2">
+                {images.map((image, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={imagePreviews[index]}
+                      alt={`Preview ${image.name}`}
+                      className="w-full h-24 object-cover rounded-md border border-gray-300"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteImage(index)}
+                      className="absolute top-1 right-1 bg-red-600 text-white rounded-full p-1 text-xs hover:bg-red-700 transition"
+                    >
+                      &times;
+                    </button>
+                    <p className="text-xs text-gray-600 mt-1 truncate">{image.name}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Submit */}

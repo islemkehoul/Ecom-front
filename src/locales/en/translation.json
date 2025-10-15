@@ -10,7 +10,9 @@
     "home": {
         "welcome": "Welcome to our online store!",
         "description": "Discover our amazing products that are crafted to elevate your lifestyle. High quality, great prices, and fast delivery.",
-        "Shop": "Shop Now"
+        "Shop": "Shop Now",
+        "clickHere": "Click here"
+
     },
     "products": {
         "title": "Our Products",
