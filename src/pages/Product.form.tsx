@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { getAllProducts, createOrder } from '../controllers/product.controller';
+import { getAllProducts,getProductByID } from '../controllers/product.controller';
+import { createOrder } from '../controllers/order.controller';
 import { VITE_API_URL } from '../api/apiconfig';
 import { z } from 'zod';
 import { WILAYAS } from '../data/Wilayas';
@@ -41,12 +42,12 @@ const ProductDetails = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   // Fetch products
-  const { data } = useQuery({
-    queryKey: ['products'],
-    queryFn: getAllProducts,
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ['products', productId],
+    queryFn: () => getProductByID(productId),
   });
 
-  const product = data?.find((p: { id: string }) => p.id === productId) as ProductType | undefined;
+  const product = data?.product;
 
   // ---- React Hook Form ----
   const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<FormData>({
@@ -65,7 +66,7 @@ const ProductDetails = () => {
     mutationKey: ['createOrder'],
     mutationFn: createOrder,
     onSuccess: () => {
-      reset(); // reset form on success
+      reset();
       alert('Order placed successfully!');
     },
     onError: () => {
@@ -79,15 +80,17 @@ const ProductDetails = () => {
 
   // Carousel navigation
   const handlePrevImage = () => {
-    setCurrentImageIndex((prev) =>
-      prev === 0 ? (product?.productImages?.length || 1) - 1 : prev - 1
-    );
+    const imageCount = product?.productImages?.length || 0;
+    if (imageCount > 0) {
+      setCurrentImageIndex((prev) => (prev === 0 ? imageCount - 1 : prev - 1));
+    }
   };
 
   const handleNextImage = () => {
-    setCurrentImageIndex((prev) =>
-      prev === (product?.productImages?.length || 1) - 1 ? 0 : prev + 1
-    );
+    const imageCount = product?.productImages?.length || 0;
+    if (imageCount > 0) {
+      setCurrentImageIndex((prev) => (prev === imageCount - 1 ? 0 : prev + 1));
+    }
   };
 
   // Prevent right-click and drag
@@ -95,13 +98,29 @@ const ProductDetails = () => {
     e.preventDefault();
   };
 
-  if (!product) {
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="container mx-auto p-6 text-center">
+        <h2 className="text-2xl text-gray-600">Loading product...</h2>
+      </div>
+    );
+  }
+
+  // Error state
+  if (isError || !product) {
     return (
       <div className="container mx-auto p-6 text-center">
         <h2 className="text-2xl text-red-500">Product not found!</h2>
       </div>
     );
   }
+
+  // Get current image URL
+  const currentImage = product.productImages?.[currentImageIndex];
+  const currentImageUrl = currentImage?.imageUrl 
+    ? `${VITE_API_URL}/products/uploads/${currentImage.imageUrl}`
+    : '';
 
   return (
     <div className="container mx-auto p-6 lg:p-10">
@@ -204,13 +223,23 @@ const ProductDetails = () => {
               <div className="flex flex-col">
                 {/* Main Image with Hover Effect for Buttons */}
                 <div className="relative h-[400px] group">
-                  <img
-                    src={`${VITE_API_URL}/products/uploads/${product.productImages[currentImageIndex]?.imageUrl}`}
-                    alt={`${product.name} - Image ${currentImageIndex + 1}`}
-                    className="h-full w-full object-cover select-none"
-                    onContextMenu={preventImageDownload}
-                    onDragStart={preventImageDownload}
-                  />
+                  {currentImageUrl ? (
+                    <img
+                      src={currentImageUrl}
+                      alt={`${product.name} - Image ${currentImageIndex + 1}`}
+                      className="h-full w-full object-cover select-none"
+                      onContextMenu={preventImageDownload}
+                      onDragStart={preventImageDownload}
+                      onError={(e) => {
+                        console.error('Image failed to load:', currentImageUrl);
+                        e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="400"%3E%3Crect fill="%23ddd" width="400" height="400"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle"%3EImage Not Found%3C/text%3E%3C/svg%3E';
+                      }}
+                    />
+                  ) : (
+                    <div className="h-full w-full flex items-center justify-center bg-gray-200">
+                      <span className="text-gray-500">No Image Available</span>
+                    </div>
+                  )}
                   {/* Transparent Overlay to Intercept Clicks on Main Image */}
                   <div
                     className="absolute inset-0"
@@ -236,23 +265,30 @@ const ProductDetails = () => {
                 </div>
                 {/* Thumbnails */}
                 <div className="flex justify-center gap-2 p-4 overflow-x-auto">
-                  {product.productImages.map((image: ProductImagesType, index: number) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={`cursor-pointer w-16 h-16 rounded-md overflow-hidden border-2 ${
-                        index === currentImageIndex ? 'border-blue-600' : 'border-gray-300'
-                      } hover:border-blue-400 transition relative`}
-                    >
-                      <img
-                        src={`${VITE_API_URL}/products/uploads/${image.imageUrl}`}
-                        alt={`${product.name} - Thumbnail ${index + 1}`}
-                        className="w-full h-full object-cover select-none"
-                        onContextMenu={preventImageDownload}
-                        onDragStart={preventImageDownload}
-                      />
-                    </button>
-                  ))}
+                  {product.productImages.map((image: ProductImagesType, index: number) => {
+                    const thumbnailUrl = `${VITE_API_URL}/products/uploads/${image.imageUrl}`;
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentImageIndex(index)}
+                        className={`cursor-pointer w-16 h-16 rounded-md overflow-hidden border-2 ${
+                          index === currentImageIndex ? 'border-blue-600' : 'border-gray-300'
+                        } hover:border-blue-400 transition relative`}
+                      >
+                        <img
+                          src={thumbnailUrl}
+                          alt={`${product.name} - Thumbnail ${index + 1}`}
+                          className="w-full h-full object-cover select-none"
+                          onContextMenu={preventImageDownload}
+                          onDragStart={preventImageDownload}
+                          onError={(e) => {
+                            console.error('Thumbnail failed to load:', thumbnailUrl);
+                            e.currentTarget.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="64" height="64"%3E%3Crect fill="%23ddd" width="64" height="64"/%3E%3C/svg%3E';
+                          }}
+                        />
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             ) : (
