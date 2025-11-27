@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
-import { getAllProducts,getProductByID } from '../controllers/product.controller';
+import { getProductByID } from '../controllers/product.controller';
 import { createOrder } from '../controllers/order.controller';
 import { VITE_API_URL } from '../api/apiconfig';
 import { z } from 'zod';
 import { WILAYAS } from '../data/Wilayas';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import type { ProductType, ProductImagesType } from '../data/product.type';
+import type { ProductImagesType } from '../data/product.type';
 
 // ---- Schema ----
 const formSchema = z.object({
@@ -88,6 +88,19 @@ const ProductDetails = () => {
         .map((v: ProductVariant) => v.size))]
     : availableSizes;
 
+  // Filter images based on selected color
+  const filteredImages = selectedColor && product?.productImages
+    ? product.productImages.filter((img: ProductImagesType) => img.color === selectedColor)
+    : product?.productImages || [];
+
+  // Use all images if no color-specific images found
+  const displayImages = filteredImages.length > 0 ? filteredImages : product?.productImages || [];
+
+  // Reset image index when color changes or filtered images change
+  useEffect(() => {
+    setCurrentImageIndex(0);
+  }, [selectedColor, filteredImages.length]);
+
   // Update selected variant when size and color are selected
   useEffect(() => {
     if (selectedSize && selectedColor) {
@@ -142,21 +155,6 @@ const ProductDetails = () => {
     mutation.mutate(data);
   };
 
-  // Carousel navigation
-  const handlePrevImage = () => {
-    const imageCount = product?.productImages?.length || 0;
-    if (imageCount > 0) {
-      setCurrentImageIndex((prev) => (prev === 0 ? imageCount - 1 : prev - 1));
-    }
-  };
-
-  const handleNextImage = () => {
-    const imageCount = product?.productImages?.length || 0;
-    if (imageCount > 0) {
-      setCurrentImageIndex((prev) => (prev === imageCount - 1 ? 0 : prev + 1));
-    }
-  };
-
   // Prevent right-click and drag
   const preventImageDownload = (e: React.MouseEvent<HTMLImageElement> | React.DragEvent<HTMLImageElement>) => {
     e.preventDefault();
@@ -180,22 +178,207 @@ const ProductDetails = () => {
     );
   }
 
-  // Get current image URL
-  const currentImage = product.productImages?.[currentImageIndex];
+  // Get current image URL from filtered/display images
+  const currentImage = displayImages[currentImageIndex];
   const currentImageUrl = currentImage?.imageUrl 
     ? `${VITE_API_URL}/products/uploads/${currentImage.imageUrl}`
     : '';
 
   return (
-    <div className="container mx-auto p-6 lg:p-10">
-      <div className="flex flex-col lg:flex-row items-start gap-10">
+    <div className="container mx-auto p-4 sm:p-6 lg:p-10 pb-24 sm:pb-6">
+      <div className="flex flex-col lg:flex-row items-start gap-6 lg:gap-10">
+        {/* Left Side - Product Info & Order Form */}
+        <div className="w-full lg:w-1/2 space-y-6">
+          <div className="space-y-3">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{product.name}</h1>
+            <p className="text-xl sm:text-2xl text-blue-600 font-bold">
+              {selectedVariant ? `DZD ${selectedVariant.price}` : `From DZD ${product.price}`}
+            </p>
+            <p className="text-gray-600 leading-relaxed">{product.description}</p>
+          </div>
+
+          {/* Order Form - Modern Design */}
+          <div className="bg-gradient-to-br from-white to-gray-50 p-6 sm:p-8 rounded-2xl shadow-lg border border-gray-100">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-1 h-8 bg-blue-600 rounded-full"></div>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Quick Order</h2>
+            </div>
+
+            <form onSubmit={handleSubmit(onSubmit)} id="order-form" className="space-y-5">
+              {/* Hidden variant SKU field */}
+              <input type="hidden" {...register('variant_sku')} />
+              
+              {/* Variant Selection Error */}
+              {errors.variant_sku && (
+                <div className="p-4 bg-red-50 border-l-4 border-red-500 rounded-r-lg">
+                  <p className="text-red-700 text-sm font-medium">{errors.variant_sku.message}</p>
+                </div>
+              )}
+
+              {/* Name */}
+              <div className="group">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Full Name</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Enter your name"
+                    {...register('customer_name')}
+                    className={`w-full px-4 py-3.5 border-2 rounded-xl bg-white transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-100 ${
+                      errors.customer_name 
+                        ? 'border-red-500 focus:border-red-500' 
+                        : 'border-gray-200 focus:border-blue-500 hover:border-gray-300'
+                    }`}
+                  />
+                </div>
+                {errors.customer_name && (
+                  <p className="text-red-600 text-xs mt-1.5 ml-1">{errors.customer_name.message}</p>
+                )}
+              </div>
+
+              {/* Phone */}
+              <div className="group">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">Phone Number</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="EX : 05XXXXXXXX"
+                    {...register('customer_phone')}
+                    className={`w-full px-4 py-3.5 border-2 rounded-xl bg-white transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-100 ${
+                      errors.customer_phone 
+                        ? 'border-red-500 focus:border-red-500' 
+                        : 'border-gray-200 focus:border-blue-500 hover:border-gray-300'
+                    }`}
+                  />
+                </div>
+                {errors.customer_phone && (
+                  <p className="text-red-600 text-xs mt-1.5 ml-1">{errors.customer_phone.message}</p>
+                )}
+              </div>
+
+              {/* City & Region Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                {/* City */}
+                <div className="group">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">Wilaya</label>
+                  <div className="relative">
+                    <select
+                      {...register('customer_city')}
+                      className={`w-full px-4 py-3.5 border-2 rounded-xl bg-white transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-100 appearance-none cursor-pointer ${
+                        errors.customer_city 
+                          ? 'border-red-500 focus:border-red-500' 
+                          : 'border-gray-200 focus:border-blue-500 hover:border-gray-300'
+                      }`}
+                    >
+                      <option value="">Select wilaya</option>
+                      {WILAYAS.map((wilaya) => (
+                        <option key={wilaya.code} value={wilaya.name}>
+                          {wilaya.nameEn}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute inset-y-0 right-4 flex items-center pointer-events-none">
+                      <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                  {errors.customer_city && (
+                    <p className="text-red-600 text-xs mt-1.5 ml-1">{errors.customer_city.message}</p>
+                  )}
+                </div>
+
+                {/* Region */}
+                <div className="group">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Region <span className="text-gray-400 text-xs">(Optional)</span>
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="e.g., Bab Ezzouar"
+                      {...register('customer_region')}
+                      className={`w-full px-4 py-3.5 border-2 rounded-xl bg-white transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-blue-100 ${
+                        errors.customer_region 
+                          ? 'border-red-500 focus:border-red-500' 
+                          : 'border-gray-200 focus:border-blue-500 hover:border-gray-300'
+                      }`}
+                    />
+                  </div>
+                  {errors.customer_region && (
+                    <p className="text-red-600 text-xs mt-1.5 ml-1">{errors.customer_region.message}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Submit Button - Hidden on mobile (sticky version below) */}
+              <button
+                type="submit"
+                disabled={isSubmitting || mutation.isPending || !selectedVariant}
+                className="hidden sm:flex w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-4 rounded-xl transition-all duration-200 font-bold text-lg shadow-lg shadow-blue-200 hover:shadow-xl hover:shadow-blue-300 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed disabled:shadow-none mt-6 transform hover:scale-[1.02] active:scale-[0.98] items-center justify-center"
+              >
+                {isSubmitting || mutation.isPending ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    Processing...
+                  </span>
+                ) : (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                    Order Now
+                  </span>
+                )}
+              </button>
+
+              {/* Security Badge */}
+              <div className="flex items-center justify-center gap-2 text-xs text-gray-500 pt-2">
+                <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                <span>Secure checkout · Your data is protected</span>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        {/* Sticky Order Button for Mobile */}
+        <div className="fixed bottom-0 left-0 right-0 z-50 sm:hidden bg-white border-t-2 border-gray-200 shadow-2xl p-4">
+          <button
+            type="submit"
+            form="order-form"
+            disabled={isSubmitting || mutation.isPending || !selectedVariant}
+            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 active:from-blue-700 active:to-blue-800 text-white py-4 rounded-xl transition-all duration-200 font-bold text-lg shadow-lg shadow-blue-200 disabled:from-gray-300 disabled:to-gray-400 disabled:cursor-not-allowed disabled:shadow-none transform active:scale-[0.98] flex items-center justify-center"
+          >
+            {isSubmitting || mutation.isPending ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                Processing...
+              </span>
+            ) : (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                </svg>
+                Order Now
+              </span>
+            )}
+          </button>
+        </div>
+
         {/* Right Side (Carousel with Thumbnails) */}
         <div className="w-full lg:w-1/2 flex flex-col gap-6">
-          <div className="bg-white rounded-lg shadow-sm overflow-hidden w-full">
-            {product.productImages && product.productImages.length > 0 ? (
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden w-full border border-gray-100">
+            {displayImages && displayImages.length > 0 ? (
               <div className="flex flex-col">
-                {/* Main Image with Hover Effect for Buttons */}
-                <div className="relative h-[400px] group">
+                {/* Main Image */}
+                <div className="relative h-[250px] sm:h-[300px] md:h-[350px] lg:h-[400px] group bg-gray-50">
                   {currentImageUrl ? (
                     <img
                       src={currentImageUrl}
@@ -214,34 +397,22 @@ const ProductDetails = () => {
                     </div>
                   )}
                   <div className="absolute inset-0" onContextMenu={(e) => e.preventDefault()}></div>
-                  {product.productImages.length > 1 && (
-                    <>
-                      <button
-                        onClick={handlePrevImage}
-                        className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-gray-800 bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition opacity-0 group-hover:opacity-100 cursor-pointer z-10"
-                      >
-                        &larr;
-                      </button>
-                      <button
-                        onClick={handleNextImage}
-                        className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gray-800 bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition opacity-0 group-hover:opacity-100 cursor-pointer z-10"
-                      >
-                        &rarr;
-                      </button>
-                    </>
-                  )}
+                  
+                
                 </div>
                 {/* Thumbnails */}
-                <div className="flex justify-center gap-2 p-4 overflow-x-auto">
-                  {product.productImages.map((image: ProductImagesType, index: number) => {
+                <div className="flex justify-center gap-2 p-3 sm:p-4 overflow-x-auto bg-gray-50">
+                  {displayImages.map((image: ProductImagesType, index: number) => {
                     const thumbnailUrl = `${VITE_API_URL}/products/uploads/${image.imageUrl}`;
                     return (
                       <button
                         key={index}
                         onClick={() => setCurrentImageIndex(index)}
-                        className={`cursor-pointer w-16 h-16 rounded-md overflow-hidden border-2 ${
-                          index === currentImageIndex ? 'border-blue-600' : 'border-gray-300'
-                        } hover:border-blue-400 transition relative flex-shrink-0`}
+                        className={`cursor-pointer w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden border-1 transition-all duration-200 ${
+                          index === currentImageIndex 
+                            ? 'border-blue-600 ring-2 ring-blue-200 scale-110' 
+                            : 'border-gray-300 hover:border-blue-400 hover:scale-105'
+                        } flex-shrink-0`}
                       >
                         <img
                           src={thumbnailUrl}
@@ -260,22 +431,25 @@ const ProductDetails = () => {
                 </div>
               </div>
             ) : (
-              <div className="h-[400px] w-full flex items-center justify-center bg-gray-200">
+              <div className="h-[250px] sm:h-[300px] md:h-[350px] lg:h-[400px] w-full flex items-center justify-center bg-gray-200">
                 <span className="text-gray-500">No Images Available</span>
               </div>
             )}
           </div>
 
           {/* Variant Selection */}
-          <div className="bg-white p-6 rounded-lg shadow-sm">
-            <h3 className="text-lg font-semibold mb-4">Select Options</h3>
+          <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+            <h3 className="text-lg font-bold text-gray-900 mb-5 flex items-center gap-2">
+              <span className="w-1.5 h-6 bg-blue-600 rounded-full"></span>
+              Select Options
+            </h3>
             
             {/* Size Selection */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Size {selectedSize && <span className="text-blue-600">({selectedSize})</span>}
+              <label className="block text-sm font-semibold text-gray-700 mb-3">
+                Size {selectedSize && <span className="text-blue-600 font-bold ml-1">· {selectedSize}</span>}
               </label>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2.5">
                 {availableSizes.map((size) => {
                   const isAvailable = sizesForColor.includes(size);
                   const isSelected = selectedSize === size;
@@ -292,12 +466,12 @@ const ProductDetails = () => {
                         }
                       }}
                       disabled={!isAvailable}
-                      className={`px-4 py-2 border rounded-md font-medium transition uppercase ${
+                      className={`px-5 py-2.5 border-1 rounded-xl font-bold transition-all duration-200 uppercase text-sm ${
                         isSelected
-                          ? 'bg-blue-600 text-white border-blue-600'
+                          ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-200 scale-105'
                           : isAvailable
-                          ? 'bg-white text-gray-800 border-gray-300 hover:border-blue-600'
-                          : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                          ? 'bg-white text-gray-800 border-gray-300 hover:border-blue-600 hover:shadow-md hover:scale-105'
+                          : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
                       }`}
                     >
                       {size as string}
@@ -308,11 +482,11 @@ const ProductDetails = () => {
             </div>
 
             {/* Color Selection */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Color {selectedColor && <span className="text-blue-600">({selectedColor})</span>}
+            <div className="mb-5">
+              <label className="block text-sm font-semibold text-gray-700 mb-3">
+                Color {selectedColor && <span className="text-blue-600 font-bold ml-1">· {selectedColor}</span>}
               </label>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2.5">
                 {availableColors.map((color) => {
                   const isAvailable = colorsForSize.includes(color);
                   const isSelected = selectedColor === color;
@@ -329,12 +503,12 @@ const ProductDetails = () => {
                         }
                       }}
                       disabled={!isAvailable}
-                      className={`px-4 py-2 border rounded-md font-medium transition ${
+                      className={`px-5 py-2.5 border-1 rounded-xl font-bold transition-all duration-200 text-sm ${
                         isSelected
-                          ? 'bg-blue-600 text-white border-blue-600'
+                          ? 'bg-blue-600 text-white border-blue-600 shadow-lg shadow-blue-200 scale-105'
                           : isAvailable
-                          ? 'bg-white text-gray-800 border-gray-300 hover:border-blue-600'
-                          : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                          ? 'bg-white text-gray-800 border-gray-300 hover:border-blue-600 hover:shadow-md hover:scale-105'
+                          : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-50'
                       }`}
                     >
                       {color as string}
@@ -344,128 +518,18 @@ const ProductDetails = () => {
               </div>
             </div>
 
-            {/* Selected Variant Info */}
-            {selectedVariant && (
-              <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-md">
-                <p className="text-sm text-gray-700">
-                  <span className="font-semibold">In Stock:</span> {selectedVariant.quantity} units
-                </p>
-                <p className="text-sm text-gray-700">
-                  <span className="font-semibold">Price:</span> DZD {selectedVariant.price}
-                </p>
-              </div>
-            )}
-
             {!selectedVariant && (selectedSize || selectedColor) && (
-              <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
-                <p className="text-sm text-gray-600">
-                  {!selectedSize ? 'Please select a size' : 'Please select a color'}
-                </p>
+              <div className="mt-5 p-4 bg-gradient-to-r from-amber-50 to-yellow-50 border-l-4 border-amber-500 rounded-r-xl">
+                <div className="flex items-center gap-3">
+                  <svg className="w-5 h-5 text-amber-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                  <p className="text-sm text-amber-800 font-medium">
+                    {!selectedSize ? 'Please select a size' : 'Please select a color'}
+                  </p>
+                </div>
               </div>
             )}
-          </div>
-        </div>
-
-        {/* Left Side - Product Info & Order Form */}
-        <div className="w-full lg:w-1/2 space-y-6">
-          <div className="space-y-4">
-            <h1 className="text-3xl font-bold text-gray-800">{product.name}</h1>
-            <p className="text-2xl text-blue-600 font-semibold">
-              {selectedVariant ? `DZD ${selectedVariant.price}` : `From DZD ${product.price}`}
-            </p>
-            <p className="text-gray-600">{product.description}</p>
-          </div>
-
-          {/* Order Form */}
-          <div className="bg-gray-50 p-6 rounded-lg shadow-sm">
-            <h2 className="text-xl font-semibold mb-4">Place Your Order</h2>
-
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              {/* Hidden variant SKU field */}
-              <input type="hidden" {...register('variant_sku')} />
-              
-              {/* Variant Selection Error */}
-              {errors.variant_sku && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-md">
-                  <p className="text-red-600 text-sm">{errors.variant_sku.message}</p>
-                </div>
-              )}
-
-              {/* Name */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                <input
-                  type="text"
-                  {...register('customer_name')}
-                  className={`w-full p-3 border rounded focus:outline-none focus:ring-2 ${
-                    errors.customer_name ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                />
-                {errors.customer_name && (
-                  <p className="text-red-500 text-sm mt-1">{errors.customer_name.message}</p>
-                )}
-              </div>
-
-              {/* Phone */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                <input
-                  type="text"
-                  {...register('customer_phone')}
-                  className={`w-full p-3 border rounded focus:outline-none focus:ring-2 ${
-                    errors.customer_phone ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                />
-                {errors.customer_phone && (
-                  <p className="text-red-500 text-sm mt-1">{errors.customer_phone.message}</p>
-                )}
-              </div>
-
-              {/* City */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
-                <select
-                  {...register('customer_city')}
-                  className={`w-full p-3 border rounded focus:outline-none focus:ring-2 ${
-                    errors.customer_city ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                >
-                  <option value="">Select a city</option>
-                  {WILAYAS.map((wilaya) => (
-                    <option key={wilaya.code} value={wilaya.name}>
-                      {wilaya.nameEn}
-                    </option>
-                  ))}
-                </select>
-                {errors.customer_city && (
-                  <p className="text-red-500 text-sm mt-1">{errors.customer_city.message}</p>
-                )}
-              </div>
-
-              {/* Region */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Region</label>
-                <input
-                  type="text"
-                  {...register('customer_region')}
-                  className={`w-full p-3 border rounded focus:outline-none focus:ring-2 ${
-                    errors.customer_region ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                />
-                {errors.customer_region && (
-                  <p className="text-red-500 text-sm mt-1">{errors.customer_region.message}</p>
-                )}
-              </div>
-
-              {/* Submit */}
-              <button
-                type="submit"
-                disabled={isSubmitting || mutation.isPending || !selectedVariant}
-                className="w-full bg-blue-600 text-white py-3 rounded hover:bg-blue-700 transition font-semibold mt-6 disabled:bg-gray-400 disabled:cursor-not-allowed"
-              >
-                {isSubmitting || mutation.isPending ? 'Processing...' : 'Buy Now'}
-              </button>
-            </form>
           </div>
         </div>
       </div>

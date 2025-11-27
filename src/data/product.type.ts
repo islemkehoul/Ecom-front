@@ -4,6 +4,7 @@ export interface ProductImagesType {
   id: number;
   productId: string;
   isMain: boolean;
+  color: string | null;
   imageUrl: string | null;
 }
 

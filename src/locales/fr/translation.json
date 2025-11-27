@@ -1,6 +1,14 @@
 {
-    "navbar.name":"Acceuil",
-    "navbar.products":"Produits",
-    "navbar.about":"À propos",
-    "navbar.contact":"Contact"
+  "navbar.name": "Acceuil",
+  "navbar.products": "Produits",
+  "navbar.about": "À propos",
+  "navbar.contact": "Contact",
+  "footer": {
+    "Products": "Produits"
+  },
+  "home": {
+    "description": "Découvrez nos produits étonnants conçus pour améliorer votre style de vie. \nHaute qualité, prix avantageux et livraison rapide.",
+    "welcome": "Bienvenue sur notre boutique en ligne !",
+    "Shop": "Achetez maintenant"
+  }
 }
