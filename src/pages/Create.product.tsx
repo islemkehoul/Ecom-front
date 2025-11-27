@@ -90,16 +90,16 @@ const ProductForm: React.FC = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto mt-10 p-6 bg-white rounded-2xl shadow-lg">
-      <h2 className="text-2xl font-bold mb-6 text-center">Create New Product</h2>
+    <div className="max-w-lg mx-auto mt-10 p-6 bg-card rounded-2xl shadow-lg border border-border">
+      <h2 className="text-2xl font-bold mb-6 text-center text-card-foreground">Create New Product</h2>
 
-      {message && <div className="mb-4 p-3 rounded bg-green-100 text-green-700">{message}</div>}
-      {error && <div className="mb-4 p-3 rounded bg-red-100 text-red-700">{error}</div>}
+      {message && <div className="mb-4 p-3 rounded bg-success/10 text-success border border-success/20">{message}</div>}
+      {error && <div className="mb-4 p-3 rounded bg-destructive/10 text-destructive border border-destructive/20">{error}</div>}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Product ID */}
         <div>
-          <label htmlFor="id" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="id" className="block text-sm font-medium text-foreground">
             Product ID
           </label>
           <input
@@ -108,13 +108,13 @@ const ProductForm: React.FC = () => {
             value={id}
             onChange={(e: ChangeEvent<HTMLInputElement>) => setId(e.target.value)}
             required
-            className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 p-2"
+            className="mt-1 block w-full rounded-lg border-input bg-background text-foreground shadow-sm focus:border-primary focus:ring focus:ring-primary/20 p-2"
           />
         </div>
 
         {/* Product Name */}
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="name" className="block text-sm font-medium text-foreground">
             Product Name
           </label>
           <input
@@ -123,13 +123,13 @@ const ProductForm: React.FC = () => {
             value={name}
             onChange={(e: ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
             required
-            className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 p-2"
+            className="mt-1 block w-full rounded-lg border-input bg-background text-foreground shadow-sm focus:border-primary focus:ring focus:ring-primary/20 p-2"
           />
         </div>
 
         {/* Price */}
         <div>
-          <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="price" className="block text-sm font-medium text-foreground">
             Price
           </label>
           <input
@@ -138,13 +138,13 @@ const ProductForm: React.FC = () => {
             value={price}
             onChange={(e: ChangeEvent<HTMLInputElement>) => setPrice(e.target.value)}
             required
-            className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 p-2"
+            className="mt-1 block w-full rounded-lg border-input bg-background text-foreground shadow-sm focus:border-primary focus:ring focus:ring-primary/20 p-2"
           />
         </div>
 
         {/* Description */}
         <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="description" className="block text-sm font-medium text-foreground">
             Description
           </label>
           <textarea
@@ -153,13 +153,13 @@ const ProductForm: React.FC = () => {
             value={description}
             onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
             required
-            className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 p-2"
+            className="mt-1 block w-full rounded-lg border-input bg-background text-foreground shadow-sm focus:border-primary focus:ring focus:ring-primary/20 p-2"
           ></textarea>
         </div>
 
         {/* Category */}
         <div>
-          <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="category" className="block text-sm font-medium text-foreground">
             Category
           </label>
           <select
@@ -167,7 +167,7 @@ const ProductForm: React.FC = () => {
             value={category}
             onChange={(e: ChangeEvent<HTMLSelectElement>) => setCategory(e.target.value)}
             required
-            className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 p-2"
+            className="mt-1 block w-full rounded-lg border-input bg-background text-foreground shadow-sm focus:border-primary focus:ring focus:ring-primary/20 p-2"
           >
             <option value="">Select a category</option>
             {categories.filter((cat) => cat !== null).map((cat) => (
@@ -183,7 +183,7 @@ const ProductForm: React.FC = () => {
 
         {/* Images */}
         <div>
-          <label htmlFor="images" className="block text-sm font-medium text-gray-700">
+          <label htmlFor="images" className="block text-sm font-medium text-foreground">
             Product Images
           </label>
           <input
@@ -192,27 +192,27 @@ const ProductForm: React.FC = () => {
             multiple
             accept="image/*"
             onChange={handleImageChange}
-            className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 p-2"
+            className="mt-1 block w-full rounded-lg border-input bg-background text-foreground shadow-sm focus:border-primary focus:ring focus:ring-primary/20 p-2"
           />
           {images.length > 0 && (
             <div className="mt-4">
-              <p className="text-sm text-gray-600">Selected images:</p>
+              <p className="text-sm text-muted-foreground">Selected images:</p>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-2">
                 {images.map((image, index) => (
                   <div key={index} className="relative">
                     <img
                       src={imagePreviews[index]}
                       alt={`Preview ${image.name}`}
-                      className="w-full h-24 object-cover rounded-md border border-gray-300"
+                      className="w-full h-24 object-cover rounded-md border border-border"
                     />
                     <button
                       type="button"
                       onClick={() => handleDeleteImage(index)}
-                      className="absolute top-1 right-1 bg-red-600 text-white rounded-full p-1 text-xs hover:bg-red-700 transition"
+                      className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 text-xs hover:bg-destructive/90 transition"
                     >
                       &times;
                     </button>
-                    <p className="text-xs text-gray-600 mt-1 truncate">{image.name}</p>
+                    <p className="text-xs text-muted-foreground mt-1 truncate">{image.name}</p>
                   </div>
                 ))}
               </div>
@@ -223,7 +223,7 @@ const ProductForm: React.FC = () => {
         {/* Submit */}
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-lg shadow hover:bg-blue-700 transition"
+          className="w-full bg-primary text-primary-foreground py-2 px-4 rounded-lg shadow hover:bg-primary/90 transition"
         >
           Create Product
         </button>

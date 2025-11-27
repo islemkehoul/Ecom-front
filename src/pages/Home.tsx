@@ -82,11 +82,11 @@ const Home = () => {
 
         @keyframes pulseGlow {
           0%, 100% {
-            box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7);
+            box-shadow: 0 0 0 0 rgba(8, 145, 178, 0.7);
             transform: scale(1);
           }
           50% {
-            box-shadow: 0 0 20px 10px rgba(37, 99, 235, 0);
+            box-shadow: 0 0 20px 10px rgba(8, 145, 178, 0);
             transform: scale(1.05);
           }
         }
@@ -127,20 +127,20 @@ const Home = () => {
       <section className="container mx-auto px-4 py-12 flex flex-col md:flex-row items-center" dir={i18n.language === 'ar' ? 'rtl' : 'ltr'}>
         {/* Text Content (Left Side in LTR, Right Side in RTL) */}
         <div className="md:w-1/2 md:pr-8 md:rtl:pr-0 md:rtl:pl-8">
-          <h1 className={`text-4xl md:text-5xl font-bold text-gray-800 ${animate ? 'fade-in-left' : ''}`}>
+          <h1 className={`text-4xl md:text-5xl font-bold text-foreground ${animate ? 'fade-in-left' : ''}`}>
             {t("home.welcome")}
           </h1>
-          <p className={`mt-4 text-lg text-gray-600 ${animate ? 'fade-in-up' : ''}`}>
+          <p className={`mt-4 text-lg text-muted-foreground ${animate ? 'fade-in-up' : ''}`}>
             {t("home.description")}
           </p>
           <div className={`mt-6 relative ${animate ? 'fade-in-up' : ''}`}>
-            <button 
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-md transition transform hover:scale-105 pulse-glow cursor-pointer"
+            <button
+              className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 py-3 rounded-lg shadow-md transition transform hover:scale-105 pulse-glow cursor-pointer"
               onClick={() => navigate('/products')}
             >
               {t("home.Shop")}
             </button>
-            
+
           </div>
         </div>
 
@@ -154,9 +154,8 @@ const Home = () => {
                   key={index}
                   src={img}
                   alt={`Slide ${index + 1}`}
-                  className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-500 ${
-                    index === currentSlide ? 'opacity-100' : 'opacity-0'
-                  }`}
+                  className={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-500 ${index === currentSlide ? 'opacity-100' : 'opacity-0'
+                    }`}
                 />
               ))}
             </div>
@@ -164,18 +163,17 @@ const Home = () => {
             {/* Navigation Arrows - only show if more than 1 image */}
             {carouselImages.length > 1 && (
               <>
-                
+
                 {/* Dots Indicator */}
                 <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
                   {carouselImages.map((_, index) => (
                     <button
                       key={index}
                       onClick={() => goToSlide(index)}
-                      className={`w-2 h-2 rounded-full transition-all ${
-                        index === currentSlide 
-                          ? 'bg-white w-8' 
-                          : 'bg-white/50 hover:bg-white/75'
-                      }`}
+                      className={`w-2 h-2 rounded-full transition-all ${index === currentSlide
+                        ? 'bg-white w-8'
+                        : 'bg-white/50 hover:bg-white/75'
+                        }`}
                       aria-label={`Go to slide ${index + 1}`}
                     />
                   ))}

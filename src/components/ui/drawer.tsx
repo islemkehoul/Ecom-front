@@ -14,10 +14,10 @@ interface DrawerProps {
 }
 
 // Drawer Component
-export const Drawer: React.FC<DrawerProps> = ({ 
-  isOpen, 
-  onClose, 
-  position = 'left', 
+export const Drawer: React.FC<DrawerProps> = ({
+  isOpen,
+  onClose,
+  position = 'left',
   children,
   title = 'Menu'
 }) => {
@@ -47,25 +47,25 @@ export const Drawer: React.FC<DrawerProps> = ({
       {/* Backdrop */}
       {isOpen && (
         <div
-          className="fixed inset-0  bg-opacity-100 transition-opacity z-40 blur-2xl"
+          className="fixed inset-0 bg-black/50 transition-opacity z-40 backdrop-blur-sm"
           onClick={onClose}
         />
       )}
 
       {/* Drawer */}
       <div
-        className={`fixed ${positionClasses[position]} ${sizeClasses[position]} bg-white shadow-xl transform transition-transform duration-300 ease-in-out z-50 ${translateClasses[position]}`}
+        className={`fixed ${positionClasses[position]} ${sizeClasses[position]} bg-background shadow-xl transform transition-transform duration-300 ease-in-out z-50 ${translateClasses[position]}`}
       >
         <div className="h-full flex flex-col">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b">
-            <h2 className="text-xl font-semibold text-gray-800">{title}</h2>
+          <div className="flex items-center justify-between p-4 border-b border-border">
+            <h2 className="text-xl font-semibold text-foreground">{title}</h2>
             <button
               onClick={onClose}
-              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              className="p-2 rounded-lg hover:bg-accent transition-colors"
               aria-label="Close drawer"
             >
-              <X className="w-5 h-5 text-gray-600" />
+              <X className="w-5 h-5 text-muted-foreground" />
             </button>
           </div>
 
@@ -85,17 +85,17 @@ interface MobileMenuButtonProps {
   className?: string;
 }
 
-export const MobileMenuButton: React.FC<MobileMenuButtonProps> = ({ 
-  onClick, 
-  className = '' 
+export const MobileMenuButton: React.FC<MobileMenuButtonProps> = ({
+  onClick,
+  className = ''
 }) => {
   return (
     <button
       onClick={onClick}
-      className={`p-2 rounded-lg hover:bg-gray-100 transition-colors ${className}`}
+      className={`p-2 rounded-lg hover:bg-accent transition-colors ${className}`}
       aria-label="Open menu"
     >
-      <Menu className="w-6 h-6 text-gray-700" />
+      <Menu className="w-6 h-6 text-foreground" />
     </button>
   );
 };

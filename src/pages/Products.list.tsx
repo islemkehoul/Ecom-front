@@ -44,8 +44,8 @@ const Products = () => {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6">Our Products</h1>
-      <p className="mt-2 mb-6">Browse through our collection</p>
+      <h1 className="text-3xl font-bold mb-6 text-foreground">Our Products</h1>
+      <p className="mt-2 mb-6 text-muted-foreground">Browse through our collection</p>
 
       {/* Search & Filter Controls */}
       <div className="mb-8 space-y-4 md:flex md:items-center md:justify-between md:space-y-0">
@@ -54,13 +54,13 @@ const Products = () => {
           placeholder="Search products..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full md:w-1/3 p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full md:w-1/3 p-2 border border-input rounded focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground transition-colors"
         />
 
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          className="w-full md:w-1/3 p-2 border border-gray-300 rounded mt-2 md:mt-0 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full md:w-1/3 p-2 border border-input rounded mt-2 md:mt-0 focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground transition-colors"
         >
           {categories.map((category) => (
             <option key={category} value={category}>
@@ -72,7 +72,7 @@ const Products = () => {
 
       {/* Results count */}
       <div className="mb-4">
-        <p className="text-gray-600">
+        <p className="text-muted-foreground">
           Showing {filteredProducts.length} of {data?.data?.length || 0} products
           {searchTerm && ` for "${searchTerm}"`}
           {selectedCategory !== 'All' && ` in ${selectedCategory}`}
@@ -82,7 +82,7 @@ const Products = () => {
       {/* Product Grid */}
       {filteredProducts.length === 0 ? (
         <div className="text-center py-8">
-          <p className="text-gray-500 text-lg">No products found.</p>
+          <p className="text-muted-foreground text-lg">No products found.</p>
           {(searchTerm || selectedCategory !== 'All') && (
             <div className="mt-4">
               <button
@@ -90,7 +90,7 @@ const Products = () => {
                   setSearchTerm('');
                   setSelectedCategory('All');
                 }}
-                className="text-blue-600 hover:text-blue-800 underline"
+                className="text-primary hover:text-primary/80 underline transition-colors"
               >
                 Clear all filters
               </button>
@@ -105,7 +105,7 @@ const Products = () => {
             return (
               <div
                 key={product.id}
-                className="border rounded-lg overflow-hidden shadow hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 flex flex-col h-[420px]"
+                className="border border-border rounded-lg overflow-hidden shadow hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-2 flex flex-col h-[420px] bg-card"
               >
                 {mainImage && mainImage.imageUrl && (
                   <img
@@ -116,18 +116,18 @@ const Products = () => {
                 )}
                 <div className="p-4 flex flex-col flex-grow">
                   <div className="flex-grow">
-                    <h3 className="text-lg font-semibold">{product.name}</h3>
-                    <p className="text-gray-600 text-sm mt-1">{product.category}</p>
-                    <p className="mt-2">
+                    <h3 className="text-lg font-semibold text-card-foreground">{product.name}</h3>
+                    <p className="text-muted-foreground text-sm mt-1">{product.category}</p>
+                    <p className="mt-2 text-foreground">
                       <strong>${product.price}</strong>
                     </p>
-                    <p className="text-gray-700 text-sm mt-1 line-clamp-2 overflow-hidden">
+                    <p className="text-muted-foreground text-sm mt-1 line-clamp-2 overflow-hidden">
                       {product.description}
                     </p>
                   </div>
                   <Link
                     to={`/products/${product.id}`}
-                    className="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition block text-center"
+                    className="mt-4 w-full bg-primary text-primary-foreground py-2 rounded hover:bg-primary/90 transition block text-center"
                   >
                     Add to Cart
                   </Link>
