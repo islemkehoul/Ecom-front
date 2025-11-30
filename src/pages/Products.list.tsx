@@ -7,9 +7,12 @@ import { getAllProducts } from '../controllers/product.controller';
 import { useTranslation } from 'react-i18next';
 
 const Products = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  
+  // Detect if current language is RTL
+  const isRTL = i18n.language === 'ar';
 
   const categories = [
     { key: 'all', label: t('categories.all') },
@@ -27,7 +30,7 @@ const Products = () => {
 
   // Filter products based on search term and category
   const filteredProducts = useMemo(() => {
-    if (!data) return []; // Access data.data based on response structure
+    if (!data) return [];
 
     return data.filter((product: ProductType) => {
       const matchesSearch =
@@ -43,13 +46,17 @@ const Products = () => {
     });
   }, [data, searchTerm, selectedCategory]);
 
-  if (isLoading) return <p>{t('products.loading')}</p>;
-  if (isError) return <p>{t('products.error_fetching')}</p>;
+  if (isLoading) return <p className={isRTL ? 'text-right' : 'text-left'}>{t('products.loading')}</p>;
+  if (isError) return <p className={isRTL ? 'text-right' : 'text-left'}>{t('products.error_fetching')}</p>;
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6 text-foreground">{t('products.title')}</h1>
-      <p className="mt-2 mb-6 text-muted-foreground">{t('products.browse_collection')}</p>
+    <div className={`container mx-auto p-4 ${isRTL ? 'rtl' : 'ltr'}`} dir={isRTL ? 'rtl' : 'ltr'}>
+      <h1 className={`text-3xl font-bold mb-6 text-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
+        {t('products.title')}
+      </h1>
+      <p className={`mt-2 mb-6 text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
+        {t('products.browse_collection')}
+      </p>
 
       {/* Search & Filter Controls */}
       <div className="mb-8 space-y-4 md:flex md:items-center md:justify-between md:space-y-0">
@@ -58,13 +65,13 @@ const Products = () => {
           placeholder={t('products.search_placeholder')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full md:w-1/3 p-2 border border-input rounded focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground transition-colors"
+          className={`w-full md:w-1/3 p-2 border border-input rounded focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground transition-colors ${isRTL ? 'text-right' : 'text-left'}`}
         />
 
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
-          className="w-full md:w-1/3 p-2 border border-input rounded mt-2 md:mt-0 focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground transition-colors"
+          className={`w-full md:w-1/3 p-2 border border-input rounded mt-2 md:mt-0 focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground transition-colors ${isRTL ? 'text-right' : 'text-left'}`}
         >
           {categories.map((category) => (
             <option key={category.key} value={category.key}>
@@ -76,7 +83,7 @@ const Products = () => {
 
       {/* Results count */}
       <div className="mb-4">
-        <p className="text-muted-foreground">
+        <p className={`text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
           {t('products.showing')} {filteredProducts.length} {t('products.of')} {data?.data?.length || 0} {t('products.products_text')}
           {searchTerm && ` ${t('products.for')} "${searchTerm}"`}
           {selectedCategory !== 'all' && ` ${t('products.in')} ${categories.find(c => c.key === selectedCategory)?.label}`}
@@ -104,7 +111,6 @@ const Products = () => {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {filteredProducts.map((product: ProductType) => {
-            // Select the main image (isMain: true) or the first image if no main image
             const mainImage = product.productImages.find((img) => img.isMain) || product.productImages[0];
             return (
               <div
@@ -120,12 +126,16 @@ const Products = () => {
                 )}
                 <div className="p-4 flex flex-col flex-grow">
                   <div className="flex-grow">
-                    <h3 className="text-lg font-semibold text-card-foreground">{product.name}</h3>
-                    <p className="text-muted-foreground text-sm mt-1">{product.category}</p>
-                    <p className="mt-2 text-foreground">
+                    <h3 className={`text-lg font-semibold text-card-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
+                      {product.name}
+                    </h3>
+                    <p className={`text-muted-foreground text-sm mt-1 ${isRTL ? 'text-right' : 'text-left'}`}>
+                      {product.category}
+                    </p>
+                    <p className={`mt-2 text-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
                       <strong>${product.price}</strong>
                     </p>
-                    <p className="text-muted-foreground text-sm mt-1 line-clamp-2 overflow-hidden">
+                    <p className={`text-muted-foreground text-sm mt-1 line-clamp-2 overflow-hidden ${isRTL ? 'text-right' : 'text-left'}`}>
                       {product.description}
                     </p>
                   </div>
