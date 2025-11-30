@@ -1,14 +1,115 @@
 {
-  "navbar.name": "Acceuil",
-  "navbar.products": "Produits",
-  "navbar.about": "À propos",
-  "navbar.contact": "Contact",
-  "footer": {
-    "Products": "Produits"
+  "navbar": {
+    "home": "Accueil",
+    "products": "Produits",
+    "about": "À propos",
+    "contact": "Contact",
+    "cart": "Panier",
+    "language": "Langue"
   },
   "home": {
-    "description": "Découvrez nos produits étonnants conçus pour améliorer votre style de vie. \nHaute qualité, prix avantageux et livraison rapide.",
     "welcome": "Bienvenue sur notre boutique en ligne !",
-    "Shop": "Achetez maintenant"
+    "description": "Découvrez nos produits étonnants conçus pour améliorer votre style de vie. Haute qualité, prix avantageux et livraison rapide.",
+    "Shop": "Achetez maintenant",
+    "clickHere": "Cliquez ici"
+  },
+  "products": {
+    "title": "Nos Produits",
+    "add_to_cart": "Ajouter au panier",
+    "view_details": "Voir les détails",
+    "browse_collection": "Parcourez notre collection",
+    "search_placeholder": "Rechercher des produits...",
+    "loading": "Chargement...",
+    "error_fetching": "Erreur lors du chargement des produits",
+    "showing": "Affichage de",
+    "of": "sur",
+    "products_text": "produits",
+    "for": "pour",
+    "in": "dans",
+    "no_products": "Aucun produit trouvé.",
+    "clear_filters": "Effacer tous les filtres"
+  },
+  "categories": {
+    "all": "Tout",
+    "electronics": "Électronique",
+    "clothing": "Vêtements",
+    "home_garden": "Maison et Jardin",
+    "books": "Livres",
+    "sports": "Sports"
+  },
+  "about": {
+    "title": "À propos de nous",
+    "content": "Nous nous engageons à offrir la meilleure expérience d'achat à nos clients.",
+    "subtitle": "Découvrez notre entreprise et notre mission"
+  },
+  "contact": {
+    "title": "Contactez-nous",
+    "email": "E-mail",
+    "phone": "Téléphone",
+    "address": "Adresse",
+    "subtitle": "Entrez en contact avec notre équipe"
+  },
+  "cart": {
+    "title": "Votre panier",
+    "empty": "Votre panier est vide.",
+    "checkout": "Passer la commande"
+  },
+  "product_details": {
+    "quick_order": "Commande rapide",
+    "full_name": "Nom complet",
+    "enter_name": "Entrez votre nom",
+    "phone_number": "Numéro de téléphone",
+    "wilaya": "Wilaya",
+    "select_wilaya": "Sélectionnez la wilaya",
+    "region": "Région",
+    "optional": "Optionnel",
+    "region_placeholder": "ex: Bab Ezzouar",
+    "processing": "Traitement en cours...",
+    "order_now": "Commander maintenant",
+    "secure_checkout": "Paiement sécurisé · Vos données sont protégées",
+    "select_options": "Sélectionnez les options",
+    "size": "Taille",
+    "color": "Couleur",
+    "select_size": "Veuillez sélectionner une taille",
+    "select_color": "Veuillez sélectionner une couleur",
+    "loading_product": "Chargement du produit...",
+    "product_not_found": "Produit introuvable !",
+    "no_image": "Aucune image disponible",
+    "no_images": "Aucune image disponible",
+    "from": "À partir de"
+  },
+  "footer": {
+    "rights_reserved": "Tous droits réservés © 2024",
+    "Company": "Entreprise",
+    "About us": "À propos de nous",
+    "Contact": "Contact",
+    "Careers": "Carrières",
+    "Products": "Produits",
+    "All Products": "Tous les produits",
+    "New Arrivals": "Nouveautés",
+    "Featured": "En vedette",
+    "Customer Service": "Service client",
+    "faq": "FAQ",
+    "Shipping": "Livraison",
+    "Returns": "Retours",
+    "Connect with us": "Connectez-vous avec nous"
+  },
+  "thank_you": {
+    "title": "Commande passée avec succès !",
+    "subtitle": "Merci pour votre commande. Nous avons reçu votre demande et vous contacterons bientôt pour confirmer les détails.",
+    "order_number": "Numéro de commande",
+    "order_date": "Date de commande",
+    "product_details": "Détails du produit",
+    "total_price": "Prix total",
+    "customer_info": "Informations client",
+    "payment_method": "Mode de paiement",
+    "cash_on_delivery": "Paiement à la livraison",
+    "payment_note": "Vous paierez à la réception de votre commande",
+    "what_next": "Et maintenant ?",
+    "step_1": "Notre équipe vous contactera dans les 24 heures pour confirmer votre commande",
+    "step_2": "Votre commande sera préparée et expédiée à votre adresse",
+    "step_3": "Vous recevrez votre commande et paierez à la livraison",
+    "continue_shopping": "Continuer vos achats",
+    "back_home": "Retour à l'accueil"
   }
 }

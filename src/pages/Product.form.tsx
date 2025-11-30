@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { getProductByID } from '../controllers/product.controller';
 import { createOrder } from '../controllers/order.controller';
@@ -49,6 +49,7 @@ interface ProductVariant {
 
 const ProductDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const productId = String(id);
 
   // State for carousel
@@ -136,21 +137,36 @@ const ProductDetails = () => {
   }, [selectedVariant, setValue]);
 
   // ---- Mutation ----
+  // ---- Mutation ----
   const mutation = useMutation({
     mutationKey: ['createOrder'],
     mutationFn: createOrder,
-    onSuccess: () => {
-      reset();
-      setSelectedSize('');
-      setSelectedColor('');
-      setSelectedVariant(null);
-      alert('Order placed successfully!');
+    onSuccess: (response, variables) => {
+      // Get the main product image
+      const mainImage = product?.productImages?.find((img: ProductImagesType) => img.isMain) || product?.productImages?.[0];
+      const imageUrl = mainImage?.imageUrl ? `${VITE_API_URL}/products/uploads/${mainImage.imageUrl}` : undefined;
+
+      // Navigate to thank you page with order data
+      navigate('/thank-you', {
+        state: {
+          orderId: response?.data?.id || Math.random().toString(36).substring(2, 9).toUpperCase(),
+          customerName: variables.customer_name,
+          customerPhone: variables.customer_phone,
+          customerCity: variables.customer_city,
+          customerRegion: variables.customer_region,
+          productName: product?.name,
+          productImage: imageUrl,
+          variantSize: selectedVariant?.size,
+          variantColor: selectedVariant?.color,
+          price: selectedVariant?.price,
+          orderDate: new Date().toLocaleDateString()
+        }
+      });
     },
     onError: () => {
       alert('Error placing order. Please try again.');
     },
   });
-
   const onSubmit = (data: FormData) => {
     mutation.mutate(data);
   };
@@ -224,8 +240,8 @@ const ProductDetails = () => {
                     placeholder="Enter your name"
                     {...register('customer_name')}
                     className={`w-full px-4 py-3.5 border-2 rounded-xl bg-background text-foreground transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-primary/20 ${errors.customer_name
-                        ? 'border-destructive focus:border-destructive'
-                        : 'border-input focus:border-primary hover:border-primary/50'
+                      ? 'border-destructive focus:border-destructive'
+                      : 'border-input focus:border-primary hover:border-primary/50'
                       }`}
                   />
                 </div>
@@ -243,8 +259,8 @@ const ProductDetails = () => {
                     placeholder="EX : 05XXXXXXXX"
                     {...register('customer_phone')}
                     className={`w-full px-4 py-3.5 border-2 rounded-xl bg-background text-foreground transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-primary/20 ${errors.customer_phone
-                        ? 'border-destructive focus:border-destructive'
-                        : 'border-input focus:border-primary hover:border-primary/50'
+                      ? 'border-destructive focus:border-destructive'
+                      : 'border-input focus:border-primary hover:border-primary/50'
                       }`}
                   />
                 </div>
@@ -262,8 +278,8 @@ const ProductDetails = () => {
                     <select
                       {...register('customer_city')}
                       className={`w-full px-4 py-3.5 border-2 rounded-xl bg-background text-foreground transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-primary/20 appearance-none cursor-pointer ${errors.customer_city
-                          ? 'border-destructive focus:border-destructive'
-                          : 'border-input focus:border-primary hover:border-primary/50'
+                        ? 'border-destructive focus:border-destructive'
+                        : 'border-input focus:border-primary hover:border-primary/50'
                         }`}
                     >
                       <option value="">Select wilaya</option>
@@ -295,8 +311,8 @@ const ProductDetails = () => {
                       placeholder="e.g., Bab Ezzouar"
                       {...register('customer_region')}
                       className={`w-full px-4 py-3.5 border-2 rounded-xl bg-background text-foreground transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-primary/20 ${errors.customer_region
-                          ? 'border-destructive focus:border-destructive'
-                          : 'border-input focus:border-primary hover:border-primary/50'
+                        ? 'border-destructive focus:border-destructive'
+                        : 'border-input focus:border-primary hover:border-primary/50'
                         }`}
                     />
                   </div>
@@ -405,8 +421,8 @@ const ProductDetails = () => {
                         key={index}
                         onClick={() => setCurrentImageIndex(index)}
                         className={`cursor-pointer w-14 h-14 sm:w-16 sm:h-16 rounded-lg overflow-hidden border-1 transition-all duration-200 ${index === currentImageIndex
-                            ? 'border-primary ring-2 ring-primary/20 scale-110'
-                            : 'border-border hover:border-primary hover:scale-105'
+                          ? 'border-primary ring-2 ring-primary/20 scale-110'
+                          : 'border-border hover:border-primary hover:scale-105'
                           } flex-shrink-0`}
                       >
                         <img
@@ -462,10 +478,10 @@ const ProductDetails = () => {
                       }}
                       disabled={!isAvailable}
                       className={`px-5 py-2.5 border-1 rounded-xl font-bold transition-all duration-200 uppercase text-sm ${isSelected
-                          ? 'bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20 scale-105'
-                          : isAvailable
-                            ? 'bg-card text-foreground border-border hover:border-primary hover:shadow-md hover:scale-105'
-                            : 'bg-muted text-muted-foreground border-border cursor-not-allowed opacity-50'
+                        ? 'bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20 scale-105'
+                        : isAvailable
+                          ? 'bg-card text-foreground border-border hover:border-primary hover:shadow-md hover:scale-105'
+                          : 'bg-muted text-muted-foreground border-border cursor-not-allowed opacity-50'
                         }`}
                     >
                       {size as string}
@@ -498,10 +514,10 @@ const ProductDetails = () => {
                       }}
                       disabled={!isAvailable}
                       className={`px-5 py-2.5 border-1 rounded-xl font-bold transition-all duration-200 text-sm ${isSelected
-                          ? 'bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20 scale-105'
-                          : isAvailable
-                            ? 'bg-card text-foreground border-border hover:border-primary hover:shadow-md hover:scale-105'
-                            : 'bg-muted text-muted-foreground border-border cursor-not-allowed opacity-50'
+                        ? 'bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20 scale-105'
+                        : isAvailable
+                          ? 'bg-card text-foreground border-border hover:border-primary hover:shadow-md hover:scale-105'
+                          : 'bg-muted text-muted-foreground border-border cursor-not-allowed opacity-50'
                         }`}
                     >
                       {color as string}

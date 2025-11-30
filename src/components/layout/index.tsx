@@ -3,6 +3,7 @@ import Navbar from '../Navbar'
 import Footer from '../Footer'
 import { Drawer, MobileMenuButton } from '../ui/drawer'
 import LanguageSelector from '@/components/theme/languange-selector';// adjust path as needed
+import ThemeToggle from '../ThemeToggle';
 
 type LayoutProps = {
   children: React.ReactNode
@@ -40,6 +41,7 @@ const Layout = ({ children }: LayoutProps) => {
           <a href="/about" className="block px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 dark:text-slate-200 transition-colors">About</a>
           <a href="/products" className="block px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 dark:text-slate-200 transition-colors">Products</a>
           <a href="/contact" className="block px-4 py-3 rounded-lg hover:bg-gray-100 dark:hover:bg-slate-800 dark:text-slate-200 transition-colors">Contact</a>
+          <li className="block px-4 py-3"><ThemeToggle /></li>
           {/* Add more links */}
         </nav>
       </Drawer>

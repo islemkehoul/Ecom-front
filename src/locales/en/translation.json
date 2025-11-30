@@ -12,27 +12,71 @@
         "description": "Discover our amazing products that are crafted to elevate your lifestyle. High quality, great prices, and fast delivery.",
         "Shop": "Shop Now",
         "clickHere": "Click here"
-
     },
     "products": {
         "title": "Our Products",
         "add_to_cart": "Add to Cart",
-        "view_details": "View Details"
+        "view_details": "View Details",
+        "browse_collection": "Browse through our collection",
+        "search_placeholder": "Search products...",
+        "loading": "Loading...",
+        "error_fetching": "Error fetching products",
+        "showing": "Showing",
+        "of": "of",
+        "products_text": "products",
+        "for": "for",
+        "in": "in",
+        "no_products": "No products found.",
+        "clear_filters": "Clear all filters"
+    },
+    "categories": {
+        "all": "All",
+        "electronics": "Electronics",
+        "clothing": "Clothing",
+        "home_garden": "Home & Garden",
+        "books": "Books",
+        "sports": "Sports"
     },
     "about": {
         "title": "About Us",
-        "content": "We are committed to providing the best shopping experience for our customers."
+        "content": "We are committed to providing the best shopping experience for our customers.",
+        "subtitle": "Learn about our company and mission"
     },
     "contact": {
         "title": "Contact Us",
         "email": "Email",
         "phone": "Phone",
-        "address": "Address"
+        "address": "Address",
+        "subtitle": "Get in touch with our team"
     },
     "cart": {
         "title": "Your Cart",
         "empty": "Your cart is empty.",
         "checkout": "Checkout"
+    },
+    "product_details": {
+        "quick_order": "Quick Order",
+        "full_name": "Full Name",
+        "enter_name": "Enter your name",
+        "phone_number": "Phone Number",
+        "wilaya": "Wilaya",
+        "select_wilaya": "Select wilaya",
+        "region": "Region",
+        "optional": "Optional",
+        "region_placeholder": "e.g., Bab Ezzouar",
+        "processing": "Processing...",
+        "order_now": "Order Now",
+        "secure_checkout": "Secure checkout · Your data is protected",
+        "select_options": "Select Options",
+        "size": "Size",
+        "color": "Color",
+        "select_size": "Please select a size",
+        "select_color": "Please select a color",
+        "loading_product": "Loading product...",
+        "product_not_found": "Product not found!",
+        "no_image": "No Image Available",
+        "no_images": "No Images Available",
+        "from": "From"
     },
     "footer": {
         "rights_reserved": "All rights reserved © 2024",
@@ -49,5 +93,23 @@
         "Shipping": "Shipping",
         "Returns": "Returns",
         "Connect with us": "Connect with us"
+    },
+    "thank_you": {
+        "title": "Order Placed Successfully!",
+        "subtitle": "Thank you for your order. We've received your request and will contact you shortly to confirm the details.",
+        "order_number": "Order Number",
+        "order_date": "Order Date",
+        "product_details": "Product Details",
+        "total_price": "Total Price",
+        "customer_info": "Customer Information",
+        "payment_method": "Payment Method",
+        "cash_on_delivery": "Cash on Delivery",
+        "payment_note": "You will pay when you receive your order",
+        "what_next": "What happens next?",
+        "step_1": "Our team will contact you within 24 hours to confirm your order",
+        "step_2": "Your order will be prepared and shipped to your address",
+        "step_3": "You'll receive your order and pay upon delivery",
+        "continue_shopping": "Continue Shopping",
+        "back_home": "Back to Home"
     }
 }

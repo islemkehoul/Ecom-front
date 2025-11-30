@@ -1,10 +1,12 @@
 
+
 import { Routes, Route, Link } from 'react-router-dom'
 import Home from './pages/Home'
 import About from './pages/About'
 import Products from './pages/Products.list'
 import Contact from './pages/Contact'
 import ProductDetails from './pages/Product.form'
+import ThankYou from './pages/ThankYou'
 import Layout from './components/layout'
 
 function App() {
@@ -17,6 +19,7 @@ function App() {
           <Route path="/products" element={<Products />} />
           <Route path="/products/:id" element={<ProductDetails />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/thank-you" element={<ThankYou />} />
         </Routes>
       </Layout>
     </div>

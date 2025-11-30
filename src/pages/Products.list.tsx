@@ -4,12 +4,21 @@ import { VITE_API_URL } from '../api/apiconfig';
 import { useQuery } from '@tanstack/react-query';
 import type { ProductType } from '../data/product.type';
 import { getAllProducts } from '../controllers/product.controller';
+import { useTranslation } from 'react-i18next';
 
 const Products = () => {
-  const [selectedCategory, setSelectedCategory] = useState('All');
+  const { t } = useTranslation();
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
 
-  const categories = ['All', 'Electronics', 'Clothing', 'Home & Garden', 'Books', 'Sports'];
+  const categories = [
+    { key: 'all', label: t('categories.all') },
+    { key: 'electronics', label: t('categories.electronics') },
+    { key: 'clothing', label: t('categories.clothing') },
+    { key: 'home_garden', label: t('categories.home_garden') },
+    { key: 'books', label: t('categories.books') },
+    { key: 'sports', label: t('categories.sports') }
+  ];
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ['products'],
@@ -27,31 +36,26 @@ const Products = () => {
         (product.description && product.description.toLowerCase().includes(searchTerm.toLowerCase()));
 
       const matchesCategory =
-        selectedCategory === 'All' ||
-        product.category?.toLowerCase() === selectedCategory.toLowerCase() ||
-        (selectedCategory === 'Electronics' && product.category === 'electronics') ||
-        (selectedCategory === 'Clothing' && product.category === 'clothing') ||
-        (selectedCategory === 'Home & Garden' && product.category === 'home_garden') ||
-        (selectedCategory === 'Books' && product.category === 'books') ||
-        (selectedCategory === 'Sports' && product.category === 'sports');
+        selectedCategory === 'all' ||
+        product.category?.toLowerCase() === selectedCategory.toLowerCase();
 
       return matchesSearch && matchesCategory;
     });
   }, [data, searchTerm, selectedCategory]);
 
-  if (isLoading) return <p>Loading...</p>;
-  if (isError) return <p>Error fetching products</p>;
+  if (isLoading) return <p>{t('products.loading')}</p>;
+  if (isError) return <p>{t('products.error_fetching')}</p>;
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-6 text-foreground">Our Products</h1>
-      <p className="mt-2 mb-6 text-muted-foreground">Browse through our collection</p>
+      <h1 className="text-3xl font-bold mb-6 text-foreground">{t('products.title')}</h1>
+      <p className="mt-2 mb-6 text-muted-foreground">{t('products.browse_collection')}</p>
 
       {/* Search & Filter Controls */}
       <div className="mb-8 space-y-4 md:flex md:items-center md:justify-between md:space-y-0">
         <input
           type="text"
-          placeholder="Search products..."
+          placeholder={t('products.search_placeholder')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full md:w-1/3 p-2 border border-input rounded focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground transition-colors"
@@ -63,8 +67,8 @@ const Products = () => {
           className="w-full md:w-1/3 p-2 border border-input rounded mt-2 md:mt-0 focus:outline-none focus:ring-2 focus:ring-primary bg-background text-foreground transition-colors"
         >
           {categories.map((category) => (
-            <option key={category} value={category}>
-              {category}
+            <option key={category.key} value={category.key}>
+              {category.label}
             </option>
           ))}
         </select>
@@ -73,26 +77,26 @@ const Products = () => {
       {/* Results count */}
       <div className="mb-4">
         <p className="text-muted-foreground">
-          Showing {filteredProducts.length} of {data?.data?.length || 0} products
-          {searchTerm && ` for "${searchTerm}"`}
-          {selectedCategory !== 'All' && ` in ${selectedCategory}`}
+          {t('products.showing')} {filteredProducts.length} {t('products.of')} {data?.data?.length || 0} {t('products.products_text')}
+          {searchTerm && ` ${t('products.for')} "${searchTerm}"`}
+          {selectedCategory !== 'all' && ` ${t('products.in')} ${categories.find(c => c.key === selectedCategory)?.label}`}
         </p>
       </div>
 
       {/* Product Grid */}
       {filteredProducts.length === 0 ? (
         <div className="text-center py-8">
-          <p className="text-muted-foreground text-lg">No products found.</p>
-          {(searchTerm || selectedCategory !== 'All') && (
+          <p className="text-muted-foreground text-lg">{t('products.no_products')}</p>
+          {(searchTerm || selectedCategory !== 'all') && (
             <div className="mt-4">
               <button
                 onClick={() => {
                   setSearchTerm('');
-                  setSelectedCategory('All');
+                  setSelectedCategory('all');
                 }}
                 className="text-primary hover:text-primary/80 underline transition-colors"
               >
-                Clear all filters
+                {t('products.clear_filters')}
               </button>
             </div>
           )}
@@ -129,7 +133,7 @@ const Products = () => {
                     to={`/products/${product.id}`}
                     className="mt-4 w-full bg-primary text-primary-foreground py-2 rounded hover:bg-primary/90 transition block text-center"
                   >
-                    Add to Cart
+                    {t('products.add_to_cart')}
                   </Link>
                 </div>
               </div>
